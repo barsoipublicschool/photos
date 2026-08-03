@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content5="width=device-width, initial-scale=1.0">
+    <title>My Photo Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+        .gallery-item {
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            transition: transform 0.3s ease;
+        }
+        .gallery-item img:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>My Google Drive Photo Gallery</h1>
+
+    <div class="gallery" id="gallery-container">
+        <!-- Photos yahan load hongi -->
+    </div>
+
+    <script>
+        // Yahan aapko apne Google Drive ki images ke Direct IDs dalne honge
+        // Google Drive image link format: https://lh3.googleusercontent.com/d/FILE_ID
+        const imageIds = [
+            "YOUR_GOOGLE_DRIVE_FILE_ID_1",
+            "YOUR_GOOGLE_DRIVE_FILE_ID_2",
+            "YOUR_GOOGLE_DRIVE_FILE_ID_3"
+        ];
+
+        const container = document.getElementById("gallery-container");
+
+        imageIds.forEach(id => {
+            const item = document.createElement("div");
+            item.className = "gallery-item";
+            
+            const img = document.createElement("img");
+            // Google Drive direct embed link
+            img.src = `https://lh3.googleusercontent.com/d/${id}`;
+            img.alt = "Gallery Photo";
+            
+            // Agar image load na ho toh fallback
+            img.onerror = function() {
+                this.src = "https://via.placeholder.com/250?text=Image+Not+Found";
+            };
+
+            item.appendChild(img);
+            container.appendChild(item);
+        });
+    </script>
+
+</body>
+</html>
