@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultra Modern Photo Gallery</title>
-    <!-- Tailwind CSS for Modern Styling -->
+    <title>Professional Photo Gallery</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -37,7 +37,6 @@
             transform: scale(1.08);
         }
 
-        /* Pulse Skeleton Loading */
         .skeleton {
             background: linear-gradient(90deg, #1f2937 25%, #374151 50%, #1f2937 75%);
             background-size: 200% 100%;
@@ -57,54 +56,41 @@
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                    <i class="fa-solid fa-aperture text-white text-xl"></i>
+                    <i class="fa-solid fa-camera-retro text-white text-xl"></i>
                 </div>
                 <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">ProGallery</span>
             </div>
             <div id="photo-count" class="text-sm font-medium text-gray-400 glass-card px-4 py-1.5 rounded-full">
-                0 Photos Loaded
+                Loading...
             </div>
         </div>
     </header>
 
     <!-- Hero Section -->
-    <section class="max-w-7xl mx-auto px-6 pt-12 pb-6 text-center">
-        <h1 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight mb-4">
-            Visual Storytelling <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-pink-500">Portfolio</span>
+    <section class="max-w-7xl mx-auto px-6 pt-10 pb-4 text-center">
+        <h1 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-3">
+            Photo <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-pink-500">Portfolio</span>
         </h1>
-        <p class="text-gray-400 max-w-2xl mx-auto text-base md:text-lg">
-            Google Sheets और Google Drive API की मदद से ऑटोमैटिक लोड होने वाली फ़ोटो गैलरी।
-        </p>
+        <p class="text-gray-400 text-sm md:text-base">Google Sheets & Drive Powered Live Gallery</p>
     </section>
 
-    <!-- Filter Pills -->
+    <!-- Filter Buttons -->
     <section class="max-w-7xl mx-auto px-6 mb-8 w-full">
-        <div id="filter-container" class="flex flex-wrap justify-center gap-2">
-            <button class="filter-btn active px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">
-                All Photos
-            </button>
-        </div>
+        <div id="filter-container" class="flex flex-wrap justify-center gap-2"></div>
     </section>
 
     <!-- Main Gallery Section -->
     <main class="max-w-7xl mx-auto px-6 flex-grow w-full mb-16">
         <!-- Skeleton Loaders -->
         <div id="skeleton-loader" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <div class="h-72 rounded-2xl skeleton"></div>
-            <div class="h-72 rounded-2xl skeleton"></div>
-            <div class="h-72 rounded-2xl skeleton"></div>
-            <div class="h-72 rounded-2xl skeleton"></div>
+            <div class="h-64 rounded-2xl skeleton"></div>
+            <div class="h-64 rounded-2xl skeleton"></div>
+            <div class="h-64 rounded-2xl skeleton"></div>
+            <div class="h-64 rounded-2xl skeleton"></div>
         </div>
 
         <!-- Real Gallery Grid -->
         <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 hidden"></div>
-        
-        <!-- Error Message Container -->
-        <div id="error-message" class="hidden text-center py-16 glass-card rounded-3xl max-w-xl mx-auto">
-            <i class="fa-solid fa-triangle-exclamation text-amber-500 text-4xl mb-4"></i>
-            <h3 class="text-xl font-bold text-white mb-2">कोई फ़ोटो लोड नहीं हो सकी!</h3>
-            <p class="text-gray-400 text-sm px-6">कृपया सुनिश्चित करें कि आपने Google App Script का Deploy URL सही कोड में डाला है और फ़ोल्डर / फ़ाइलों की Drive Permission "Anyone with link" पर सेट है।</p>
-        </div>
     </main>
 
     <!-- Lightbox Modal -->
@@ -112,7 +98,7 @@
         <button id="close-lightbox" class="absolute top-6 right-6 text-white/70 hover:text-white text-3xl transition-all">
             <i class="fa-solid fa-xmark"></i>
         </button>
-        <div class="relative max-w-5xl w-full flex flex-col items-center">
+        <div class="relative max-w-4xl w-full flex flex-col items-center">
             <img id="lightbox-img" class="max-h-[80vh] max-w-full object-contain rounded-xl shadow-2xl" src="" alt="">
             <div class="mt-4 text-center">
                 <h3 id="lightbox-title" class="text-xl font-semibold text-white"></h3>
@@ -122,7 +108,7 @@
     </div>
 
     <script>
-        // ⚠️ यहाँ अपना Google App Script Web App URL डालें
+        // ⚠️ यहाँ अपना Web App URL डालें
         const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydUq-nG8_ScNSF2P3-NCJG7DnFiUbok-OXVjivawIU5J04-DSSXWYs6rtvj0TlchMD/exec";
 
         let allPhotos = [];
@@ -132,33 +118,33 @@
         async function fetchPhotos() {
             const skeleton = document.getElementById('skeleton-loader');
             const grid = document.getElementById('gallery-grid');
-            const errorContainer = document.getElementById('error-message');
 
             try {
                 const response = await fetch(APP_SCRIPT_URL);
-                if (!response.ok) throw new Error('Network error');
-                
                 const data = await response.json();
                 
-                if (!data || data.length === 0) {
-                    throw new Error('No data found');
-                }
-
                 allPhotos = data.filter(item => item.file_id);
                 
                 skeleton.classList.add('hidden');
                 grid.classList.remove('hidden');
                 
-                document.getElementById('photo-count').innerText = `${allPhotos.length} Photos`;
+                document.getElementById('photo-count').innerText = `${allPhotos.length} Photos Loaded`;
 
                 renderFilters();
                 renderGallery(allPhotos);
 
             } catch (error) {
                 console.error("Error fetching photos:", error);
-                skeleton.classList.add('hidden');
-                errorContainer.classList.remove('hidden');
+                skeleton.innerHTML = "<p class='col-span-full text-center text-red-400'>डेटा लोड करने में समस्या आई। कृपया URL चेक करें।</p>";
             }
+        }
+
+        // Google Drive Thumbnail Proxy URLs (2 Level Fallback)
+        function getDriveImageUrls(fileId) {
+            return [
+                `https://lh3.googleusercontent.com/d/${fileId}=s1000`,
+                `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`
+            ];
         }
 
         function renderGallery(photos) {
@@ -166,19 +152,18 @@
             grid.innerHTML = '';
 
             photos.forEach(photo => {
-                const title = photo.title || 'Untitled Photo';
+                const title = photo.title || 'Untitled';
                 const category = photo.category || 'General';
-                // Direct Google Thumbnail API Link
-                const imgUrl = `https://lh3.googleusercontent.com/d/${photo.file_id}=s1200`;
+                const [primaryUrl, fallbackUrl] = getDriveImageUrls(photo.file_id);
 
                 const card = document.createElement('div');
                 card.className = 'gallery-item group cursor-pointer glass-card rounded-2xl overflow-hidden flex flex-col relative';
                 
                 card.innerHTML = `
                     <div class="relative h-64 overflow-hidden bg-gray-900">
-                        <img src="${imgUrl}" alt="${title}" loading="lazy" 
+                        <img src="${primaryUrl}" alt="${title}" loading="lazy" 
                              class="w-full h-full object-cover img-hover"
-                             onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300/1e293b/94a3b8?text=Image+Load+Error'">
+                             onerror="if (this.src !== '${fallbackUrl}') { this.src='${fallbackUrl}'; } else { this.onerror=null; this.src='https://via.placeholder.com/400x300/1e293b/94a3b8?text=Private+Drive+Image'; }">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                             <span class="text-xs font-semibold uppercase tracking-wider text-indigo-400 bg-indigo-950/80 px-2.5 py-1 rounded-md border border-indigo-500/30">${category}</span>
                         </div>
@@ -188,7 +173,7 @@
                     </div>
                 `;
 
-                card.addEventListener('click', () => openLightbox(imgUrl, title, category));
+                card.addEventListener('click', () => openLightbox(primaryUrl, title, category));
                 grid.appendChild(card);
             });
         }
