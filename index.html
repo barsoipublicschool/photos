@@ -4,47 +4,383 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo Gallery</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- Font Awesome for Icons -->
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-color: #38bdf8;
+            --text-secondary: #94a3b8;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #0f172a;
+            --accent-color: #0284c7;
+            --text-secondary: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .theme-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 2rem 1rem 1.5rem;
+        }
+
+        .hero h1 { font-size: 2.2rem; margin-bottom: 0.5rem; }
+        .hero p { color: var(--text-secondary); }
+
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            padding: 0 1rem;
+        }
+
+        .filter-btn {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--text-secondary);
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background-color: var(--accent-color);
+            color: #fff;
+            border-color: var(--accent-color);
+        }
+
+        .gallery-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem 4rem;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gallery-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .gallery-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .card-info {
+            padding: 1rem;
+        }
+
+        .card-info h3 { font-size: 1.1rem; }
+        .card-info p { font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px; }
+
+        .loader {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            padding: 3rem;
+        }
+
+        /* Lightbox Modal */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+
+        .lightbox-caption {
+            color: #fff;
+            margin-top: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #fff;
+            font-size: 40px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Header Section -->
     <header class="navbar">
-        <div class="logo"><i class="fa-solid fa-camera-retro"></i> My Gallery</div>
+        <div class="logo"><i class="fa-solid fa-camera-retro"></i> Photo Gallery</div>
         <button id="theme-toggle" class="theme-btn"><i class="fa-solid fa-moon"></i></button>
     </header>
 
-    <!-- Hero Section -->
     <section class="hero">
-        <h1>Moments Captured</h1>
-        <p>Explore high-quality photos directly synced from Google Drive</p>
+        <h1>My Photography Portfolio</h1>
+        <p>Live photos fetched directly from Google Sheet & Drive</p>
     </section>
 
-    <!-- Filter Buttons -->
+    <!-- Category Filter Buttons -->
     <div class="filter-container" id="filter-buttons">
         <button class="filter-btn active" data-category="all">All</button>
     </div>
 
-    <!-- Photo Grid -->
+    <!-- Gallery Grid -->
     <main class="gallery-container">
-        <div class="gallery-grid" id="gallery-grid">
-            <!-- Dynamic Images will be inserted here -->
-        </div>
         <div id="loader" class="loader">
-            <i class="fa-solid fa-circle-notch fa-spin"></i>
+            <i class="fa-solid fa-circle-notch fa-spin"></i> Loading Photos...
         </div>
+        <div class="gallery-grid" id="gallery-grid"></div>
     </main>
 
     <!-- Lightbox Modal -->
     <div id="lightbox" class="lightbox">
         <span class="close-btn" id="close-lightbox">&times;</span>
-        <img class="lightbox-content" id="lightbox-img" src="" alt="">
+        <img class="lightbox-content" id="lightbox-img" src="" alt="Full View">
         <div class="lightbox-caption" id="lightbox-caption"></div>
-        <a id="download-btn" class="download-btn" href="#" target="_blank" download><i class="fa-solid fa-download"></i> Download Original</a>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // ⚠️ YAHAN APNA GOOGLE SHEET PUBLISHED CSV LINK PASTE KAREIN
+        const GOOGLE_SHEET_CSV_URL = "YOUR_PUBLISHED_GOOGLE_SHEET_CSV_URL_HERE";
+
+        let imagesData = [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            setupThemeToggle();
+            fetchGalleryData();
+            setupLightbox();
+        });
+
+        // CSV Fetch & Parse Logic
+        async function fetchGalleryData() {
+            const loader = document.getElementById("loader");
+            try {
+                const response = await fetch(GOOGLE_SHEET_CSV_URL);
+                const csvText = await response.text();
+                
+                imagesData = parseCSV(csvText);
+
+                loader.style.display = "none";
+                
+                if(imagesData.length === 0) {
+                    document.getElementById("gallery-grid").innerHTML = "<p>Sheet me koi valid photo link nahi mili.</p>";
+                    return;
+                }
+
+                renderCategories();
+                renderGallery(imagesData);
+            } catch (error) {
+                console.error("Error fetching sheet:", error);
+                loader.innerHTML = "<p style='color:red;'>Sheet Load nahi hui! CSV Link check karein.</p>";
+            }
+        }
+
+        // CSV Parser
+        function parseCSV(csv) {
+            const lines = csv.split(/\r?\n/);
+            if (lines.length < 2) return [];
+
+            const headers = lines[0].split(",").map(h => h.trim().toLowerCase().replace(/^"|"$/g, ''));
+            const result = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                
+                const currentline = lines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
+                const obj = {};
+
+                headers.forEach((header, index) => {
+                    let val = currentline[index] ? currentline[index].trim() : "";
+                    val = val.replace(/^"|"$/g, '');
+                    obj[header] = val;
+                });
+
+                if (obj.drive_url) {
+                    obj.direct_url = convertDriveToCdn(obj.drive_url);
+                }
+
+                if(obj.direct_url) {
+                    result.push(obj);
+                }
+            }
+            return result;
+        }
+
+        // Google Drive Link to High Speed Proxy Image CDN
+        function convertDriveToCdn(url) {
+            let fileId = "";
+            
+            if (url.includes("/d/")) {
+                fileId = url.split("/d/")[1].split("/")[0];
+            } else if (url.includes("id=")) {
+                fileId = url.split("id=")[1].split("&")[0];
+            }
+
+            if (!fileId) return url;
+
+            // wsrv.nl proxy Google Drive CORS block ko bypass karta hai
+            const rawGoogleUrl = `https://drive.google.com/uc?id=${fileId}`;
+            return `https://wsrv.nl/?url=${encodeURIComponent(rawGoogleUrl)}&w=800&output=webp`;
+        }
+
+        // Gallery Render
+        function renderGallery(data) {
+            const grid = document.getElementById("gallery-grid");
+            grid.innerHTML = "";
+
+            data.forEach(item => {
+                const title = item.title || item.photo_name || item.name || "Untitled";
+                const category = item.category || "General";
+
+                const card = document.createElement("div");
+                card.className = "gallery-card";
+
+                card.innerHTML = `
+                    <img src="${item.direct_url}" alt="${title}" loading="lazy" 
+                         onerror="this.src='https://via.placeholder.com/400x300?text=Private+Drive+Image'">
+                    <div class="card-info">
+                        <h3>${title}</h3>
+                        <p>${category}</p>
+                    </div>
+                `;
+
+                card.addEventListener("click", () => openLightbox(item.direct_url, title));
+                grid.appendChild(card);
+            });
+        }
+
+        // Category Filter Logic
+        function renderCategories() {
+            const filterContainer = document.getElementById("filter-buttons");
+            const categories = ["all", ...new Set(imagesData.map(item => item.category).filter(Boolean))];
+
+            filterContainer.innerHTML = "";
+            categories.forEach(cat => {
+                const btn = document.createElement("button");
+                btn.className = `filter-btn ${cat === 'all' ? 'active' : ''}`;
+                btn.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+                btn.onclick = () => filterGallery(cat, btn);
+                filterContainer.appendChild(btn);
+            });
+        }
+
+        function filterGallery(category, clickedBtn) {
+            document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+            clickedBtn.classList.add("active");
+
+            if (category === "all") {
+                renderGallery(imagesData);
+            } else {
+                const filtered = imagesData.filter(item => item.category && item.category.toLowerCase() === category.toLowerCase());
+                renderGallery(filtered);
+            }
+        }
+
+        // Lightbox Logic
+        function setupLightbox() {
+            const modal = document.getElementById("lightbox");
+            const closeBtn = document.getElementById("close-lightbox");
+
+            closeBtn.onclick = () => modal.style.display = "none";
+            modal.onclick = (e) => {
+                if (e.target === modal) modal.style.display = "none";
+            };
+        }
+
+        function openLightbox(imgUrl, title) {
+            const modal = document.getElementById("lightbox");
+            const img = document.getElementById("lightbox-img");
+            const caption = document.getElementById("lightbox-caption");
+
+            img.src = imgUrl;
+            caption.textContent = title;
+            modal.style.display = "flex";
+        }
+
+        // Dark/Light Mode Switcher
+        function setupThemeToggle() {
+            const toggleBtn = document.getElementById("theme-toggle");
+            toggleBtn.addEventListener("click", () => {
+                const currentTheme = document.body.getAttribute("data-theme");
+                if (currentTheme === "light") {
+                    document.body.removeAttribute("data-theme");
+                    toggleBtn.innerHTML = `<i class="fa-solid fa-moon"></i>`;
+                } else {
+                    document.body.setAttribute("data-theme", "light");
+                    toggleBtn.innerHTML = `<i class="fa-solid fa-sun"></i>`;
+                }
+            });
+        }
+    </script>
 </body>
 </html>
