@@ -210,10 +210,8 @@
     </div>
 
     <script>
-        // ⚠️ YAHAN APNA GOOGLE SHEET PUBLISHED CSV LINK PASTE KAREIN
+        // GOOGLE SHEET PUBLISHED CSV LINK
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTKjcmRNm2WBvdrueFjPCe7d82BuosEiC2brkGtKJIy-UQPJlpW0Ons8X5z8KxfILH-M2WSID2bLejN/pub?output=csv";
-
-let imagesData = [];";
 
         let imagesData = [];
 
@@ -278,7 +276,7 @@ let imagesData = [];";
             return result;
         }
 
-        // Google Drive Link to High Speed Proxy Image CDN
+        // Google Drive Link Converter (Reliable Google CDN CDN)
         function convertDriveToCdn(url) {
             let fileId = "";
             
@@ -290,9 +288,8 @@ let imagesData = [];";
 
             if (!fileId) return url;
 
-            // wsrv.nl proxy Google Drive CORS block ko bypass karta hai
-            const rawGoogleUrl = `https://drive.google.com/uc?id=${fileId}`;
-            return `https://wsrv.nl/?url=${encodeURIComponent(rawGoogleUrl)}&w=800&output=webp`;
+            // Google CDN URL (Fast & avoids CORS issues)
+            return `https://lh3.googleusercontent.com/d/${fileId}`;
         }
 
         // Gallery Render
@@ -309,7 +306,7 @@ let imagesData = [];";
 
                 card.innerHTML = `
                     <img src="${item.direct_url}" alt="${title}" loading="lazy" 
-                         onerror="this.src='https://via.placeholder.com/400x300?text=Private+Drive+Image'">
+                         onerror="this.src='https://via.placeholder.com/400x300?text=Photo+Not+Found'">
                     <div class="card-info">
                         <h3>${title}</h3>
                         <p>${category}</p>
